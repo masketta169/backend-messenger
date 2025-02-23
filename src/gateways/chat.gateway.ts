@@ -11,10 +11,10 @@ export class ChatGateway {
 
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: { content: string }) {
-    const message = await prisma.message.create({
-      data: { content: data.content },
-    });
-    this.server.emit('message', message);
-    return message;
+    // const message = await prisma.message.create({
+    //   data: { content: data.content },
+    // });
+    // this.server.emit('message', message);
+    // return message;
   }
 }

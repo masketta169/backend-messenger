@@ -13,8 +13,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SubjectType {
+  MATH
+  PHYSICS
+  CHEMISTRY
+  BIOLOGY
+  HISTORY
+  COMPUTER_SCIENCE
+  LITERATURE
+}
+
+enum Role {
+  STUDENT
+  TUTOR
+  ADMIN
+}
+
+model User {
+  id          String       @id @default(uuid())
+  name        String
+  surname     String
+  second_name String?
+  role        Role
+  subjects    SubjectType[]
+  email       String       @unique
+  password    String
+  createdAt   DateTime     @default(now())
+
+  chats       ChatUser[]
+  messages    Message[]
+
+  refreshToken String?
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  name      String?
+  createdAt DateTime @default(now())
+
+  messages  Message[]
+  users     ChatUser[]
+}
+
+model ChatUser {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId String
+
+  @@unique([userId, chatId])
+}
+
 model Message {
   id        String   @id @default(uuid())
   content   String
   createdAt DateTime @default(now())
+
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 }
